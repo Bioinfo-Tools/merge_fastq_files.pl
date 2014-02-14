@@ -26,8 +26,6 @@ barcode.fastq:
 	ATGCAAAA
 	+
 	########
-	@HWI-ST382:168:D2CFKACXX:7:1101:3118:1990 2:Y:0:
-	ATTCTACT
 
 read1.fastq
 
