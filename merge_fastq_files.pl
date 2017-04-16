@@ -14,7 +14,7 @@ GetOptions ("bcfile=s" => \$bcfile,    # numeric
                     "read2=s"  => \$read2
                     );  # flag
 
-unless ( $bcfile && $read1 && $out ) {
+unless ( $read1 && $out ) {
     print "Usage: perl merge_fastq_reads.pl 
         -bcfile barcode file in fastq format
         -read1 fastq file with reads from left
@@ -28,9 +28,11 @@ unless ( $bcfile && $read1 && $out ) {
 
 ################Check INPUT FILE########################
 $barcodefile = $bcfile;
-unless ( open( READ0, "$barcodefile" ) ) {
-print "Error: Unable to open file $barcodefile.\n";
-exit;
+if($barcodefile){
+	unless ( open( READ0, "$barcodefile" ) ) {
+	print "Error: Unable to open file $barcodefile.\n";
+	exit;
+	}
 }
 ###########################################################
                                                                       
@@ -72,7 +74,7 @@ sub read_fastq {
     $linecount = 1;
     
     my $bcline;
-    
+if($bcfile){    
     while ( $bcline = <READ0> ) {
         
         $read1line = <READ1>;
@@ -110,5 +112,49 @@ sub read_fastq {
         
     }
 
+}else{
+
+
+    while ( $read1line = <READ1> ) {
+
+       # $read1line = <READ1>;
+
+        #     chomp($bcline);
+             chomp($read1line);
+
+        if ($linecount != 3){
+
+            if ($paired eq "yes"){
+                $read2line = <READ2>;
+                chomp($read2line);
+
+                print OUT "$read1line"."$read2line\n";
+            }else{
+                chomp($bcline);
+                print OUT "$read1line\n";
+            }
+        }else{
+
+            if ($paired eq "yes"){
+                $read2line = <READ2>;
+                chomp($read2line);
+            }
+
+            print OUT "$read1line\n";
+            }
+
+
+        if($linecount == 4){
+   
+            $linecount = 1;
+
+        }else{$linecount++;}
+        
+    }
+
+
+
+
+}
 
 }
